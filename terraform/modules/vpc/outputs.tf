@@ -22,3 +22,8 @@ output "internet_gateway_id" {
   description = "インターネットゲートウェイのID"
   value       = aws_internet_gateway.main.id
 }
+
+output "private_route_table_id" {
+  description = "プライベートルートテーブルのID"
+  value       = aws_route_table.private.id
+}
