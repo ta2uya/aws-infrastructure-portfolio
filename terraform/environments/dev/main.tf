@@ -51,3 +51,19 @@ module "alb" {
   security_group_id   = module.security_group.alb_security_group_id
   target_instance_ids = module.ec2.instance_ids
 }
+
+module "rds" {
+  source = "../../modules/rds"
+
+  project_name      = var.project_name
+  environment       = var.environment
+  subnet_ids        = module.vpc.private_subnet_ids
+  security_group_id = module.security_group.rds_security_group_id
+
+  instance_class    = "db.t3.micro"
+  allocated_storage = 20
+  db_name           = "appdb"
+  db_username       = "dbadmin"
+  db_password       = var.db_password
+  multi_az          = false
+}

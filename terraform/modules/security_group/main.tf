@@ -64,3 +64,31 @@ resource "aws_security_group" "ec2" {
     Environment = var.environment
   }
 }
+
+# RDS用セキュリティグループ
+resource "aws_security_group" "rds" {
+  name        = "${var.project_name}-${var.environment}-rds-sg"
+  description = "Security group for RDS"
+  vpc_id      = var.vpc_id
+
+  # EC2からのアクセスのみ許可（PostgreSQL）
+  ingress {
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ec2.id]
+    description     = "PostgreSQL from EC2 only"
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name        = "${var.project_name}-${var.environment}-rds-sg"
+    Environment = var.environment
+  }
+}
