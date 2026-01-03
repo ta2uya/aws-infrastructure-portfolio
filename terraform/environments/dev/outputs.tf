@@ -8,13 +8,18 @@ output "public_subnet_ids" {
   value       = module.vpc.public_subnet_ids
 }
 
-output "private_subnet_ids" {
-  description = "プライベートサブネットのID"
-  value       = module.vpc.private_subnet_ids
+output "private_webap_subnet_ids" {
+  description = "プライベートサブネット（WebAP）のID"
+  value       = module.vpc.private_webap_subnet_ids
+}
+
+output "private_db_subnet_ids" {
+  description = "プライベートサブネット（DB）のID"
+  value       = module.vpc.private_db_subnet_ids
 }
 
 output "alb_dns_name" {
-  description = "ALBのDNS名"
+  description = "ALBのDNS名（ブラウザでアクセス可能）"
   value       = module.alb.alb_dns_name
 }
 

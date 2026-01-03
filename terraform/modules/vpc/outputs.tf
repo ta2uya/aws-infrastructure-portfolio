@@ -13,9 +13,14 @@ output "public_subnet_ids" {
   value       = aws_subnet.public[*].id
 }
 
-output "private_subnet_ids" {
-  description = "プライベートサブネットのIDリスト"
-  value       = aws_subnet.private[*].id
+output "private_webap_subnet_ids" {
+  description = "プライベートサブネット（WebAP）のIDリスト"
+  value       = aws_subnet.private_webap[*].id
+}
+
+output "private_db_subnet_ids" {
+  description = "プライベートサブネット（DB）のIDリスト"
+  value       = aws_subnet.private_db[*].id
 }
 
 output "internet_gateway_id" {
@@ -23,7 +28,12 @@ output "internet_gateway_id" {
   value       = aws_internet_gateway.main.id
 }
 
-output "private_route_table_id" {
-  description = "プライベートルートテーブルのID"
-  value       = aws_route_table.private.id
+output "private_webap_route_table_id" {
+  description = "プライベートルートテーブル（WebAP）のID"
+  value       = aws_route_table.private_webap.id
+}
+
+output "private_db_route_table_id" {
+  description = "プライベートルートテーブル（DB）のID"
+  value       = aws_route_table.private_db.id
 }
