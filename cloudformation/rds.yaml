@@ -15,18 +15,6 @@ Parameters:
     Default: dev
     Description: Environment name
 
-  PrivateDbSubnet1Id:
-    Type: AWS::EC2::Subnet::Id
-    Description: Private DB Subnet 1 ID
-
-  PrivateDbSubnet2Id:
-    Type: AWS::EC2::Subnet::Id
-    Description: Private DB Subnet 2 ID
-
-  RdsSecurityGroupId:
-    Type: AWS::EC2::SecurityGroup::Id
-    Description: RDS Security Group ID
-
   DBInstanceClass:
     Type: String
     Default: db.t3.micro
@@ -72,8 +60,10 @@ Resources:
       DBSubnetGroupName: !Sub ${ProjectName}-${Environment}-db-subnet
       DBSubnetGroupDescription: Subnet group for RDS
       SubnetIds:
-        - !Ref PrivateDbSubnet1Id
-        - !Ref PrivateDbSubnet2Id
+        - !ImportValue
+          Fn::Sub: ${ProjectName}-${Environment}-private-db-subnet-1-id
+        - !ImportValue
+          Fn::Sub: ${ProjectName}-${Environment}-private-db-subnet-2-id
       Tags:
         - Key: Name
           Value: !Sub ${ProjectName}-${Environment}-db-subnet
@@ -97,7 +87,8 @@ Resources:
       MasterUserPassword: !Ref DBPassword
       DBSubnetGroupName: !Ref DBSubnetGroup
       VPCSecurityGroups:
-        - !Ref RdsSecurityGroupId
+        - !ImportValue
+          Fn::Sub: ${ProjectName}-${Environment}-rds-sg-id
       MultiAZ: !Ref MultiAZ
       BackupRetentionPeriod: 7
       PreferredBackupWindow: 03:00-04:00

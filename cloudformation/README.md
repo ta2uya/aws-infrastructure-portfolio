@@ -47,20 +47,21 @@ aws cloudformation create-stack \
   --stack-name portfolio-dev-sg \
   --template-body file://security-group.yaml \
   --parameters ParameterKey=ProjectName,ParameterValue=portfolio \
-               ParameterKey=Environment,ParameterValue=dev \
-               ParameterKey=VpcId,ParameterValue=<VPC_ID>
+               ParameterKey=Environment,ParameterValue=dev
 
-3. VPC Endpoints
+aws cloudformation wait stack-create-complete --stack-name portfolio-dev-sg
+```
+
+
+3.VPC Endpoints
+```
 aws cloudformation create-stack \
   --stack-name portfolio-dev-vpce \
   --template-body file://vpc-endpoints.yaml \
   --parameters ParameterKey=ProjectName,ParameterValue=portfolio \
-               ParameterKey=Environment,ParameterValue=dev \
-               ParameterKey=VpcId,ParameterValue=<VPC_ID> \
-               ParameterKey=PrivateWebApSubnet1Id,ParameterValue=<SUBNET_ID> \
-               ParameterKey=PrivateWebApSubnet2Id,ParameterValue=<SUBNET_ID> \
-               ParameterKey=PrivateWebApRouteTableId,ParameterValue=<ROUTE_TABLE_ID> \
-               ParameterKey=VpcEndpointSecurityGroupId,ParameterValue=<SG_ID>
+               ParameterKey=Environment,ParameterValue=dev
+
+aws cloudformation wait stack-create-complete --stack-name portfolio-dev-vpce
 ```
 
 4.EC2
@@ -70,10 +71,9 @@ aws cloudformation create-stack \
   --template-body file://ec2.yaml \
   --parameters ParameterKey=ProjectName,ParameterValue=portfolio \
                ParameterKey=Environment,ParameterValue=dev \
-               ParameterKey=PrivateWebApSubnet1Id,ParameterValue=<SUBNET_ID> \
-               ParameterKey=PrivateWebApSubnet2Id,ParameterValue=<SUBNET_ID> \
-               ParameterKey=Ec2SecurityGroupId,ParameterValue=<SG_ID> \
   --capabilities CAPABILITY_NAMED_IAM
+
+aws cloudformation wait stack-create-complete --stack-name portfolio-dev-ec2
 ```
 
 5.ALB
@@ -82,13 +82,9 @@ aws cloudformation create-stack \
   --stack-name portfolio-dev-alb \
   --template-body file://alb.yaml \
   --parameters ParameterKey=ProjectName,ParameterValue=portfolio \
-               ParameterKey=Environment,ParameterValue=dev \
-               ParameterKey=VpcId,ParameterValue=<VPC_ID> \
-               ParameterKey=PublicSubnet1Id,ParameterValue=<SUBNET_ID> \
-               ParameterKey=PublicSubnet2Id,ParameterValue=<SUBNET_ID> \
-               ParameterKey=AlbSecurityGroupId,ParameterValue=<SG_ID> \
-               ParameterKey=Ec2Instance1Id,ParameterValue=<EC2_ID> \
-               ParameterKey=Ec2Instance2Id,ParameterValue=<EC2_ID>
+               ParameterKey=Environment,ParameterValue=dev
+
+aws cloudformation wait stack-create-complete --stack-name portfolio-dev-alb
 ```
 
 6.RDS
@@ -98,10 +94,8 @@ aws cloudformation create-stack \
   --template-body file://rds.yaml \
   --parameters ParameterKey=ProjectName,ParameterValue=portfolio \
                ParameterKey=Environment,ParameterValue=dev \
-               ParameterKey=PrivateDbSubnet1Id,ParameterValue=<SUBNET_ID> \
-               ParameterKey=PrivateDbSubnet2Id,ParameterValue=<SUBNET_ID> \
-               ParameterKey=RdsSecurityGroupId,ParameterValue=<SG_ID> \
                ParameterKey=DBPassword,ParameterValue=<PASSWORD>
+aws cloudformation wait stack-create-complete --stack-name portfolio-dev-rds
 ```
 
 ### AWSコンソールを使用する場合
@@ -116,11 +110,22 @@ aws cloudformation create-stack \
 デプロイとは逆の順で削除
 ```
 aws cloudformation delete-stack --stack-name portfolio-dev-rds
+aws cloudformation wait stack-delete-complete --stack-name portfolio-dev-rds
+
 aws cloudformation delete-stack --stack-name portfolio-dev-alb
+aws cloudformation wait stack-delete-complete --stack-name portfolio-dev-alb
+
 aws cloudformation delete-stack --stack-name portfolio-dev-ec2
+aws cloudformation wait stack-delete-complete --stack-name portfolio-dev-ec2
+
 aws cloudformation delete-stack --stack-name portfolio-dev-vpce
+aws cloudformation wait stack-delete-complete --stack-name portfolio-dev-vpce
+
 aws cloudformation delete-stack --stack-name portfolio-dev-sg
+aws cloudformation wait stack-delete-complete --stack-name portfolio-dev-sg
+
 aws cloudformation delete-stack --stack-name portfolio-dev-vpc
+aws cloudformation wait stack-delete-complete --stack-name portfolio-dev-vpc
 ```
 
 ## 備考：本番環境での推奨事項

@@ -20,18 +20,6 @@ Parameters:
     Default: t3.micro
     Description: EC2 instance type
 
-  PrivateWebApSubnet1Id:
-    Type: AWS::EC2::Subnet::Id
-    Description: Private WebAP Subnet 1 ID
-
-  PrivateWebApSubnet2Id:
-    Type: AWS::EC2::Subnet::Id
-    Description: Private WebAP Subnet 2 ID
-
-  Ec2SecurityGroupId:
-    Type: AWS::EC2::SecurityGroup::Id
-    Description: EC2 Security Group ID
-
 # ------------------------------------------------------------
 # Resources
 # ------------------------------------------------------------
@@ -70,9 +58,11 @@ Resources:
     Properties:
       ImageId: !Sub '{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64}}'
       InstanceType: !Ref InstanceType
-      SubnetId: !Ref PrivateWebApSubnet1Id
+      SubnetId: !ImportValue
+        Fn::Sub: ${ProjectName}-${Environment}-private-webap-subnet-1-id
       SecurityGroupIds:
-        - !Ref Ec2SecurityGroupId
+        - !ImportValue
+          Fn::Sub: ${ProjectName}-${Environment}-ec2-sg-id
       IamInstanceProfile: !Ref Ec2InstanceProfile
       UserData:
         Fn::Base64: !Sub |
@@ -94,9 +84,11 @@ Resources:
     Properties:
       ImageId: !Sub '{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64}}'
       InstanceType: !Ref InstanceType
-      SubnetId: !Ref PrivateWebApSubnet2Id
+      SubnetId: !ImportValue
+        Fn::Sub: ${ProjectName}-${Environment}-private-webap-subnet-2-id
       SecurityGroupIds:
-        - !Ref Ec2SecurityGroupId
+        - !ImportValue
+          Fn::Sub: ${ProjectName}-${Environment}-ec2-sg-id
       IamInstanceProfile: !Ref Ec2InstanceProfile
       UserData:
         Fn::Base64: !Sub |
@@ -131,7 +123,11 @@ Outputs:
   Ec2Instance1PrivateIp:
     Description: EC2 Instance 1 Private IP
     Value: !GetAtt Ec2Instance1.PrivateIp
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-ec2-1-private-ip
 
   Ec2Instance2PrivateIp:
     Description: EC2 Instance 2 Private IP
     Value: !GetAtt Ec2Instance2.PrivateIp
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-ec2-2-private-ip

@@ -15,26 +15,6 @@ Parameters:
     Default: dev
     Description: Environment name
 
-  VpcId:
-    Type: AWS::EC2::VPC::Id
-    Description: VPC ID
-
-  PrivateWebApSubnet1Id:
-    Type: AWS::EC2::Subnet::Id
-    Description: Private WebAP Subnet 1 ID
-
-  PrivateWebApSubnet2Id:
-    Type: AWS::EC2::Subnet::Id
-    Description: Private WebAP Subnet 2 ID
-
-  PrivateWebApRouteTableId:
-    Type: String
-    Description: Private WebAP Route Table ID
-
-  VpcEndpointSecurityGroupId:
-    Type: AWS::EC2::SecurityGroup::Id
-    Description: VPC Endpoint Security Group ID
-
 # ------------------------------------------------------------
 # Resources
 # ------------------------------------------------------------
@@ -43,53 +23,67 @@ Resources:
   SsmEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+        Fn::Sub: ${ProjectName}-${Environment}-vpc-id
       ServiceName: !Sub com.amazonaws.${AWS::Region}.ssm
       VpcEndpointType: Interface
       SubnetIds:
-        - !Ref PrivateWebApSubnet1Id
-        - !Ref PrivateWebApSubnet2Id
+        - !ImportValue
+          Fn::Sub: ${ProjectName}-${Environment}-private-webap-subnet-1-id
+        - !ImportValue
+          Fn::Sub: ${ProjectName}-${Environment}-private-webap-subnet-2-id
       SecurityGroupIds:
-        - !Ref VpcEndpointSecurityGroupId
+        - !ImportValue
+          Fn::Sub: ${ProjectName}-${Environment}-vpce-sg-id
       PrivateDnsEnabled: true
 
   # SSM Messages Endpoint
   SsmMessagesEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+        Fn::Sub: ${ProjectName}-${Environment}-vpc-id
       ServiceName: !Sub com.amazonaws.${AWS::Region}.ssmmessages
       VpcEndpointType: Interface
       SubnetIds:
-        - !Ref PrivateWebApSubnet1Id
-        - !Ref PrivateWebApSubnet2Id
+        - !ImportValue
+          Fn::Sub: ${ProjectName}-${Environment}-private-webap-subnet-1-id
+        - !ImportValue
+          Fn::Sub: ${ProjectName}-${Environment}-private-webap-subnet-2-id
       SecurityGroupIds:
-        - !Ref VpcEndpointSecurityGroupId
+        - !ImportValue
+          Fn::Sub: ${ProjectName}-${Environment}-vpce-sg-id
       PrivateDnsEnabled: true
 
   # EC2 Messages Endpoint
   Ec2MessagesEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+        Fn::Sub: ${ProjectName}-${Environment}-vpc-id
       ServiceName: !Sub com.amazonaws.${AWS::Region}.ec2messages
       VpcEndpointType: Interface
       SubnetIds:
-        - !Ref PrivateWebApSubnet1Id
-        - !Ref PrivateWebApSubnet2Id
+        - !ImportValue
+          Fn::Sub: ${ProjectName}-${Environment}-private-webap-subnet-1-id
+        - !ImportValue
+          Fn::Sub: ${ProjectName}-${Environment}-private-webap-subnet-2-id
       SecurityGroupIds:
-        - !Ref VpcEndpointSecurityGroupId
+        - !ImportValue
+          Fn::Sub: ${ProjectName}-${Environment}-vpce-sg-id
       PrivateDnsEnabled: true
 
   # S3 Endpoint (Gateway type - free)
   S3Endpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+        Fn::Sub: ${ProjectName}-${Environment}-vpc-id
       ServiceName: !Sub com.amazonaws.${AWS::Region}.s3
       VpcEndpointType: Gateway
       RouteTableIds:
-        - !Ref PrivateWebApRouteTableId
+        - !ImportValue
+          Fn::Sub: ${ProjectName}-${Environment}-private-webap-rt-id
 
 # ------------------------------------------------------------
 # Outputs

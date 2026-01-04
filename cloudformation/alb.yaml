@@ -15,30 +15,6 @@ Parameters:
     Default: dev
     Description: Environment name
 
-  VpcId:
-    Type: AWS::EC2::VPC::Id
-    Description: VPC ID
-
-  PublicSubnet1Id:
-    Type: AWS::EC2::Subnet::Id
-    Description: Public Subnet 1 ID
-
-  PublicSubnet2Id:
-    Type: AWS::EC2::Subnet::Id
-    Description: Public Subnet 2 ID
-
-  AlbSecurityGroupId:
-    Type: AWS::EC2::SecurityGroup::Id
-    Description: ALB Security Group ID
-
-  Ec2Instance1Id:
-    Type: AWS::EC2::Instance::Id
-    Description: EC2 Instance 1 ID
-
-  Ec2Instance2Id:
-    Type: AWS::EC2::Instance::Id
-    Description: EC2 Instance 2 ID
-
 # ------------------------------------------------------------
 # Resources
 # ------------------------------------------------------------
@@ -51,10 +27,13 @@ Resources:
       Type: application
       Scheme: internet-facing
       SecurityGroups:
-        - !Ref AlbSecurityGroupId
+        - !ImportValue
+          Fn::Sub: ${ProjectName}-${Environment}-alb-sg-id
       Subnets:
-        - !Ref PublicSubnet1Id
-        - !Ref PublicSubnet2Id
+        - !ImportValue
+          Fn::Sub: ${ProjectName}-${Environment}-public-subnet-1-id
+        - !ImportValue
+          Fn::Sub: ${ProjectName}-${Environment}-public-subnet-2-id
       Tags:
         - Key: Name
           Value: !Sub ${ProjectName}-${Environment}-alb
@@ -68,12 +47,15 @@ Resources:
       Name: !Sub ${ProjectName}-${Environment}-tg
       Port: 80
       Protocol: HTTP
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+        Fn::Sub: ${ProjectName}-${Environment}-vpc-id
       TargetType: instance
       Targets:
-        - Id: !Ref Ec2Instance1Id
+        - Id: !ImportValue
+            Fn::Sub: ${ProjectName}-${Environment}-ec2-1-id
           Port: 80
-        - Id: !Ref Ec2Instance2Id
+        - Id: !ImportValue
+            Fn::Sub: ${ProjectName}-${Environment}-ec2-2-id
           Port: 80
       HealthCheckEnabled: true
       HealthCheckPath: /

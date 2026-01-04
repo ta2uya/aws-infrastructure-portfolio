@@ -15,10 +15,6 @@ Parameters:
     Default: dev
     Description: Environment name
 
-  VpcId:
-    Type: AWS::EC2::VPC::Id
-    Description: VPC ID
-
 # ------------------------------------------------------------
 # Resources
 # ------------------------------------------------------------
@@ -29,7 +25,8 @@ Resources:
     Properties:
       GroupName: !Sub ${ProjectName}-${Environment}-alb-sg
       GroupDescription: Security group for ALB
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+        Fn::Sub: ${ProjectName}-${Environment}-vpc-id
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
@@ -57,7 +54,8 @@ Resources:
     Properties:
       GroupName: !Sub ${ProjectName}-${Environment}-ec2-sg
       GroupDescription: Security group for EC2
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+        Fn::Sub: ${ProjectName}-${Environment}-vpc-id
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
@@ -80,7 +78,8 @@ Resources:
     Properties:
       GroupName: !Sub ${ProjectName}-${Environment}-rds-sg
       GroupDescription: Security group for RDS
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+        Fn::Sub: ${ProjectName}-${Environment}-vpc-id
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 5432
@@ -103,7 +102,8 @@ Resources:
     Properties:
       GroupName: !Sub ${ProjectName}-${Environment}-vpce-sg
       GroupDescription: Security group for VPC Endpoints
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+        Fn::Sub: ${ProjectName}-${Environment}-vpc-id
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 443
